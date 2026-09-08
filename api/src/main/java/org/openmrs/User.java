@@ -97,6 +97,17 @@ public class User extends BaseOpenmrsObject implements java.io.Serializable, Att
 	@Cascade({ CascadeType.MERGE, CascadeType.PERSIST, CascadeType.DETACH })
 	private Set<Role> roles;
 
+	/**
+	 * The locations this user has been assigned to. An empty set means the user is unrestricted, not
+	 * that the user has no locations available; see
+	 * {@link org.openmrs.api.UserService#getAllowedLocations(User, LocationTag)}.
+	 *
+	 * @since 3.0.0
+	 */
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(name = "user_location", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "location_id"))
+	private Set<Location> locations;
+
 	@ElementCollection
 	@CollectionTable(name = "user_property", joinColumns = @JoinColumn(name = "user_id", nullable = false))
 	@MapKeyColumn(name = "property", length = 255)
@@ -350,6 +361,22 @@ public class User extends BaseOpenmrsObject implements java.io.Serializable, Att
 		}
 
 		return this;
+	}
+
+	/**
+	 * @return the locations this user is assigned to, empty when the user is unrestricted
+	 * @since 3.0.0
+	 */
+	public Set<Location> getLocations() {
+		return locations;
+	}
+
+	/**
+	 * @param locations the locations to assign this user to
+	 * @since 3.0.0
+	 */
+	public void setLocations(Set<Location> locations) {
+		this.locations = locations;
 	}
 
 	/**

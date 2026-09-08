@@ -13,6 +13,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import org.openmrs.Location;
+import org.openmrs.LocationTag;
 import org.openmrs.Person;
 import org.openmrs.Privilege;
 import org.openmrs.Role;
@@ -644,4 +646,23 @@ public interface UserService extends OpenmrsService {
 	 */
 	@Authorized
 	String getLastLoginTime(User user);
+
+	/**
+	 * Resolves the locations the given user is allowed to use for the given tag. A user with no
+	 * assigned locations is unrestricted and gets every location carrying the tag; otherwise the result
+	 * is the intersection of the tagged locations and the user's assigned locations.
+	 * <p>
+	 * <strong>Should</strong> return all tagged locations if the user has no assigned locations<br/>
+	 * <strong>Should</strong> return only the assigned locations that carry the tag<br/>
+	 * <strong>Should</strong> return an empty list if no assigned location carries the tag<br/>
+	 * <strong>Should</strong> return an empty list if the tag is null<br/>
+	 * <strong>Should</strong> return an empty list if the user is not persisted
+	 *
+	 * @param user the user whose allowed locations to resolve
+	 * @param tag the tag the locations must carry
+	 * @return the allowed locations, never null
+	 * @since 3.0.0
+	 */
+	@Authorized(PrivilegeConstants.GET_LOCATIONS)
+	List<Location> getAllowedLocations(User user, LocationTag tag);
 }

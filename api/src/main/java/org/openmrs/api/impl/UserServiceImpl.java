@@ -12,6 +12,7 @@ package org.openmrs.api.impl;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -25,6 +26,8 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.openmrs.Location;
+import org.openmrs.LocationTag;
 import org.openmrs.Person;
 import org.openmrs.Privilege;
 import org.openmrs.Role;
@@ -843,6 +846,30 @@ public class UserServiceImpl extends BaseOpenmrsService implements UserService, 
 	@Override
 	public List<Class<?>> getRefTypes() {
 		return Arrays.asList(Role.class, Privilege.class, User.class);
+	}
+
+	/**
+	 * @see org.openmrs.api.UserService#getAllowedLocations(User, LocationTag)
+	 */
+	@Override
+	@Transactional(readOnly = true)
+	@Authorized(PrivilegeConstants.GET_LOCATIONS)
+	public List<Location> getAllowedLocations(User user, LocationTag tag) {
+		// re-read the user so the lazy collection initialises inside this transaction, whatever the
+		// caller passed in
+		User persisted = (user == null || user.getUserId() == null) ? null : dao.getUser(user.getUserId());
+		if (tag == null || persisted == null) {
+			return Collections.emptyList();
+		}
+
+		List<Location> tagged = Context.getLocationService().getLocationsByTag(tag);
+
+		Set<Location> assigned = persisted.getLocations();
+		if (assigned == null || assigned.isEmpty()) {
+			return tagged;
+		}
+
+		return tagged.stream().filter(assigned::contains).collect(Collectors.toList());
 	}
 
 }
