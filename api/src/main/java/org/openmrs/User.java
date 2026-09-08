@@ -106,7 +106,7 @@ public class User extends BaseOpenmrsObject implements java.io.Serializable, Att
 	 */
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "user_location", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "location_id"))
-	private Set<Location> locations;
+	private Set<Location> locations = new HashSet<>();
 
 	@ElementCollection
 	@CollectionTable(name = "user_property", joinColumns = @JoinColumn(name = "user_id", nullable = false))

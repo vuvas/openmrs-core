@@ -123,7 +123,10 @@ public class HibernateLocationDAO implements LocationDAO {
 	 */
 	@Override
 	public void deleteLocation(Location location) {
-		sessionFactory.getCurrentSession().remove(location);
+		Session session = sessionFactory.getCurrentSession();
+		session.createNativeQuery("delete from user_location where location_id = :locationId")
+		        .setParameter("locationId", location.getLocationId()).executeUpdate();
+		session.remove(location);
 	}
 
 	/**
