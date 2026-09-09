@@ -126,7 +126,7 @@ public class HibernateLocationDAO implements LocationDAO {
 	@Override
 	public void deleteLocation(Location location) {
 		Session session = sessionFactory.getCurrentSession();
-		// ponytail: native delete bypasses the session cache, so a User.locations collection already
+		// Note: this native delete bypasses the session cache, so a User.locations collection already
 		// loaded into this session won't reflect the removal until it's reloaded. Safe today since no
 		// caller holds a loaded User across this call; re-evaluate (e.g. evict/refresh affected Users,
 		// or flush+clear) if that changes.
