@@ -551,7 +551,7 @@ public class LocationServiceTest extends BaseContextSensitiveTest {
 		Location locationToDelete = ls.getLocation(4);
 
 		User user = us.getUser(1);
-		user.setLocations(new HashSet<>(Collections.singletonList(locationToDelete)));
+		user.setAssignedLocations(new HashSet<>(Collections.singletonList(locationToDelete)));
 		us.saveUser(user);
 
 		ls.purgeLocation(locationToDelete);

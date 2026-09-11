@@ -1802,49 +1802,49 @@ public class UserServiceTest extends BaseContextSensitiveTest {
 	}
 
 	@Test
-	public void getAllowedLocations_shouldReturnAllTaggedLocationsIfTheUserHasNoAssignedLocations() {
+	public void getAllowedLocationsByTag_shouldReturnAllTaggedLocationsIfTheUserHasNoAssignedLocations() {
 		LocationTag tag = tagLocations(1, 2);
 
-		List<Location> allowed = userService.getAllowedLocations(userService.getUser(1), tag);
+		Set<Location> allowed = userService.getAllowedLocationsByTag(userService.getUser(1), tag);
 
 		assertThat(allowed, hasSize(2));
 	}
 
 	@Test
-	public void getAllowedLocations_shouldReturnOnlyTheAssignedLocationsThatCarryTheTag() {
+	public void getAllowedLocationsByTag_shouldReturnOnlyTheAssignedLocationsThatCarryTheTag() {
 		LocationTag tag = tagLocations(1, 2);
 		User user = assignLocations(1, 2, 3);
 
-		List<Location> allowed = userService.getAllowedLocations(user, tag);
+		Set<Location> allowed = userService.getAllowedLocationsByTag(user, tag);
 
 		assertThat(allowed, hasSize(2));
 
 		user = assignLocations(2);
 
-		allowed = userService.getAllowedLocations(user, tag);
+		allowed = userService.getAllowedLocationsByTag(user, tag);
 
 		assertThat(allowed, hasSize(1));
-		assertEquals(Integer.valueOf(2), allowed.get(0).getLocationId());
+		assertEquals(Integer.valueOf(2), allowed.iterator().next().getLocationId());
 	}
 
 	@Test
-	public void getAllowedLocations_shouldReturnAnEmptyListIfNoAssignedLocationCarriesTheTag() {
+	public void getAllowedLocationsByTag_shouldReturnAnEmptySetIfNoAssignedLocationCarriesTheTag() {
 		LocationTag tag = tagLocations(1);
 		User user = assignLocations(2);
 
-		assertThat(userService.getAllowedLocations(user, tag), hasSize(0));
+		assertThat(userService.getAllowedLocationsByTag(user, tag), hasSize(0));
 	}
 
 	@Test
-	public void getAllowedLocations_shouldReturnAnEmptyListIfTheUserIsNotPersisted() {
+	public void getAllowedLocationsByTag_shouldReturnAnEmptySetIfTheUserIsNotPersisted() {
 		LocationTag tag = tagLocations(1, 2);
 
-		assertThat(userService.getAllowedLocations(new User(), tag), hasSize(0));
+		assertThat(userService.getAllowedLocationsByTag(new User(), tag), hasSize(0));
 	}
 
 	@Test
-	public void getAllowedLocations_shouldReturnAnEmptyListIfTheTagIsNull() {
-		assertThat(userService.getAllowedLocations(userService.getUser(1), null), hasSize(0));
+	public void getAllowedLocationsByTag_shouldReturnAnEmptySetIfTheTagIsNull() {
+		assertThat(userService.getAllowedLocationsByTag(userService.getUser(1), null), hasSize(0));
 	}
 
 	private LocationTag tagLocations(Integer... locationIds) {
@@ -1866,7 +1866,7 @@ public class UserServiceTest extends BaseContextSensitiveTest {
 		for (Integer locationId : locationIds) {
 			locations.add(Context.getLocationService().getLocation(locationId));
 		}
-		user.setLocations(locations);
+		user.setAssignedLocations(locations);
 		return userService.saveUser(user);
 	}
 

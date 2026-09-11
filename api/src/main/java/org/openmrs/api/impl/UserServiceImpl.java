@@ -15,6 +15,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -849,27 +850,27 @@ public class UserServiceImpl extends BaseOpenmrsService implements UserService, 
 	}
 
 	/**
-	 * @see org.openmrs.api.UserService#getAllowedLocations(User, LocationTag)
+	 * @see org.openmrs.api.UserService#getAllowedLocationsByTag(User, LocationTag)
 	 */
 	@Override
 	@Transactional(readOnly = true)
 	@Authorized(PrivilegeConstants.GET_LOCATIONS)
-	public List<Location> getAllowedLocations(User user, LocationTag tag) {
+	public Set<Location> getAllowedLocationsByTag(User user, LocationTag tag) {
 		// re-read the user so the lazy collection initialises inside this transaction, whatever the
 		// caller passed in
 		User persisted = (user == null || user.getUserId() == null) ? null : dao.getUser(user.getUserId());
 		if (tag == null || persisted == null) {
-			return Collections.emptyList();
+			return Collections.emptySet();
 		}
 
 		List<Location> tagged = Context.getLocationService().getLocationsByTag(tag);
 
-		Set<Location> assigned = persisted.getLocations();
+		Set<Location> assigned = persisted.getAssignedLocations();
 		if (assigned == null || assigned.isEmpty()) {
-			return tagged;
+			return new LinkedHashSet<>(tagged);
 		}
 
-		return tagged.stream().filter(assigned::contains).collect(Collectors.toList());
+		return tagged.stream().filter(assigned::contains).collect(Collectors.toCollection(LinkedHashSet::new));
 	}
 
 }

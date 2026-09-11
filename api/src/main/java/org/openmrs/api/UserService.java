@@ -12,6 +12,7 @@ package org.openmrs.api;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import org.openmrs.Location;
 import org.openmrs.LocationTag;
@@ -656,9 +657,9 @@ public interface UserService extends OpenmrsService {
 	 * <p>
 	 * <strong>Should</strong> return all tagged locations if the user has no assigned locations<br/>
 	 * <strong>Should</strong> return only the assigned locations that carry the tag<br/>
-	 * <strong>Should</strong> return an empty list if no assigned location carries the tag<br/>
-	 * <strong>Should</strong> return an empty list if the tag is null<br/>
-	 * <strong>Should</strong> return an empty list if the user is not persisted
+	 * <strong>Should</strong> return an empty set if no assigned location carries the tag<br/>
+	 * <strong>Should</strong> return an empty set if the tag is null<br/>
+	 * <strong>Should</strong> return an empty set if the user is not persisted
 	 *
 	 * @param user the user whose allowed locations to resolve
 	 * @param tag the tag the locations must carry
@@ -666,5 +667,5 @@ public interface UserService extends OpenmrsService {
 	 * @since 3.0.0
 	 */
 	@Authorized(PrivilegeConstants.GET_LOCATIONS)
-	List<Location> getAllowedLocations(User user, LocationTag tag);
+	Set<Location> getAllowedLocationsByTag(User user, LocationTag tag);
 }

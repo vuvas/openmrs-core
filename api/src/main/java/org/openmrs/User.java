@@ -15,6 +15,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -101,7 +102,7 @@ public class User extends BaseOpenmrsObject implements java.io.Serializable, Att
 	/**
 	 * The locations this user has been assigned to. An empty set means the user is unrestricted, not
 	 * that the user has no locations available; see
-	 * {@link org.openmrs.api.UserService#getAllowedLocations(User, LocationTag)}.
+	 * {@link org.openmrs.api.UserService#getAllowedLocationsByTag(User, LocationTag)}.
 	 *
 	 * @since 3.0.0
 	 */
@@ -369,16 +370,16 @@ public class User extends BaseOpenmrsObject implements java.io.Serializable, Att
 	 * @return the locations this user is assigned to, empty when the user is unrestricted
 	 * @since 3.0.0
 	 */
-	public Set<Location> getLocations() {
-		return locations;
+	public Set<Location> getAssignedLocations() {
+		return assignedLocations;
 	}
 
 	/**
-	 * @param locations the locations to assign this user to
+	 * @param assignedLocations the locations to assign this user to
 	 * @since 3.0.0
 	 */
-	public void setLocations(Set<Location> locations) {
-		this.locations = locations;
+	public void setAssignedLocations(Set<Location> assignedLocations) {
+		this.assignedLocations = assignedLocations;
 	}
 
 	/**
